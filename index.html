@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Palooza Chat</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,500' rel='stylesheet' type='text/css'>
+    <link href="styles/normalize.css" rel="stylesheet" type="text/css">
+    <link href="styles/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="loginContainer" class="container-fixed">
+    <form id="login">
+        <div id="loginError" class="error"></div>
+        <h1 class="text-center">Palooza Chat</h1>
+        <h3 class="text-center">Log In</h3>
+        <div class="form-input text-center">
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="Username">
+        </div>
+        <div class="form-input text-center">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Password">
+        </div>
+        <div class="form-input text-center">
+            <button type="submit">Log In</button>
+        </div>
+    </form>
+</div>
+<div id="serverSelect" class="container-fixed">
+    <h1 class="text-center">Palooza Chat</h1>
+    <h3 class="text-center">Select Server</h3>
+</div>
+<div id="app">
+    <form id="send">
+        <input id="message" type="text" placeholder="Your Message" autocomplete="off">
+        <button class="hidden" type="submit"></button>
+    </form>
+</div>
+<script src="script/async.js"></script>
+<script src="script/script.js"></script>
+</body>
+</html>
