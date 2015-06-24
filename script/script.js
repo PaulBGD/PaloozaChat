@@ -1,10 +1,12 @@
 (function () {
-    var url = 'http://127.0.0.1:3000/v1/';
+    var url = 'http://dev.minigamepalooza.com/api/v1/';
     var name;
     var id;
     var apiKey;
     var server;
     var lastMessage = 1;
+    var previous = [];
+    var previousIndex = -1;
 
     var loading = false;
 
@@ -49,10 +51,10 @@
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
         var app = document.getElementById('app');
-        if (app.hasChildNodes()) {
-            app.insertBefore(span, app.childNodes[0]);
-        } else {
-            app.appendChild(span);
+        var bottom = window.scrollMaxY === window.scrollY;
+        app.appendChild(span);
+        if (bottom) {
+            window.scrollTo(0, document.body.scrollHeight);
         }
         return span;
     }
@@ -62,54 +64,63 @@
     }
 
     function getMessages() {
-        ajax(url + 'servers/chat/latest', 'POST', {
-            server: server,
-            count: 100,
-            startAt: lastMessage
-        }, function (err, response) {
+        async.waterfall([
+            function (callback) {
+                ajax(url + 'servers/chat/latest', 'POST', {
+                    server: server,
+                    count: 100,
+                    startAt: lastMessage
+                }, callback);
+            },
+            function (response, callback) {
+                response = JSON.parse(response);
+                if (response.error) {
+                    return logError(response.message);
+                }
+                var messages = [];
+                var ids = [];
+                for (var property in response) {
+                    var message = response[property];
+                    lastMessage = message.uid + 1;
+                    ids.push(message.id);
+                    messages.push({
+                        id: message.id,
+                        message: message.message,
+                        type: message.type
+                    });
+                }
+                if (ids.length) {
+                    ajax(url + 'player/from-ids', 'POST', {
+                        ids: ids.join(',')
+                    }, function (err, response) {
+                        callback(err, response, messages);
+                    });
+                }
+            },
+            function (response, messages) {
+                response = JSON.parse(response);
+                if (response.error) {
+                    return logError(response.message);
+                }
+                var length = messages.length;
+                for (var i = 0; i < length; i++) {
+                    var message = messages[i];
+                    var prefix = '';
+                    if (message.type == 1) {
+                        prefix = '[BROADCAST] ';
+                    } else if (message.type == 2) {
+                        prefix = '[WEB] ';
+                    }
+                    logNormal(prefix + response[message.id].name + ': ' + message.message);
+                }
+            }
+        ], function (err) {
             if (err) {
                 if (err.message == 429) {
                     return;
                 }
                 logError('Internal error occured');
                 throw err;
-            }
-            response = JSON.parse(response);
-            if (response.error) {
-                return logError(response.message);
-            }
-            var messages = [];
-            var ids = [];
-            for (var property in response) {
-                var message = response[property];
-                lastMessage = message.uid + 1;
-                ids.push(message.id);
-                messages.push({
-                    id: message.id,
-                    message: message.message
-                });
-            }
-            if (ids.length) {
-                ajax(url + 'player/from-ids', 'POST', {
-                    ids: ids.join(',')
-                }, function (err, response) {
-                    if (err) {
-                        if (err.message == 429) {
-                            return;
-                        }
-                        logError('Internal error occured');
-                        throw err;
-                    }
-                    response = JSON.parse(response);
-                    if (response.error) {
-                        return logError(response.message);
-                    }
-                    var length = messages.length;
-                    for (var i = 0; i < length; i++) {
-                        var message = messages[i];
-                        logNormal(response[message.id].name + ': ' + message.message);
-                    }
-                });
             }
         });
     }
@@ -118,27 +129,89 @@
         'Password is not set': 'You have not set your password yet. Go ingame and type /account password <password> to do so'
     };
 
+    document.getElementById('message').addEventListener('keydown', function (e) {
+        if (e.keyCode == 38) {
+            if (previousIndex + 1 < previous.length) {
+                previousIndex++;
+                this.value = previous[previousIndex];
+            }
+        } else if (e.keyCode == 40) {
+            if (previousIndex > 0) {
+                previousIndex--;
+                this.value = previous[previousIndex];
+            }
+        } else {
+            previousIndex = -1;
+        }
+    });
+
     document.getElementById('send').addEventListener('submit', function (e) {
         var message = document.getElementById('message').value;
         document.getElementById('message').value = '';
-        ajax(url + 'servers/chat/send', 'POST', {
-            id: id,
-            server: server,
-            api_key: apiKey,
-            message: message
-        }, function (err, response) {
-            if (err) {
-                if (err.message == 429) {
-                    return logError('Please slow down');
+        previous.unshift(message);
+        if (message.length > 0 && message.charAt(0) == '/') {
+            // let's handle this command
+            logNormal(message);
+            var arguments = message.replace('/', '').split(' ');
+            var command = arguments.shift();
+            if (command.toLowerCase() == 'online') {
+                ajax(url + 'servers/players', 'POST', {
+                    server: server
+                }, function (err, response) {
+                    if (err) {
+                        logError('An error occurred retrieving online players');
+                        throw err;
+                    }
+                    response = JSON.parse(response);
+                    var players = {};
+                    var ids = [];
+                    for (var property in response) {
+                        var list = response[property];
+                        var length = list.length;
+                        while (length--) {
+                            var id = list[length];
+                            players[id] = property; // reverse
+                            ids.push(id);
+                        }
+                    }
+                    ajax(url + 'player/from-ids', 'POST', {
+                        ids: ids.join(',')
+                    }, function (err, response) {
+                        if (err) {
+                            logError('An error occurred retrieving players');
+                            throw err;
+                        }
+                        response = JSON.parse(response);
+                        var names = [];
+                        for (var property in response) {
+                            names.push(response[property].name);
+                        }
+                        logNormal('Online Players: ' + names.join(','));
+                    });
+                });
+            } else {
+                logError('Invalid command "' + command + '"! Valid commands: /online');
+            }
+        } else {
+            ajax(url + 'servers/chat/send', 'POST', {
+                id: id,
+                server: server,
+                api_key: apiKey,
+                message: message
+            }, function (err, response) {
+                if (err) {
+                    if (err.message == 429) {
+                        return logError('Please slow down');
+                    }
+                    logError('Internal error occured');
+                    throw err;
                 }
-                logError('Internal error occured');
-                throw err;
-            }
-            response = JSON.parse(response);
-            if (response.error) {
-                return logError(response.message);
-            }
-        });
+                response = JSON.parse(response);
+                if (response.error) {
+                    return logError(response.message);
+                }
+            });
+        }
         e.preventDefault();
         return false;
     });
@@ -201,29 +274,7 @@
             },
             function (selected, callback) {
                 server = selected;
-                ajax(url + 'servers/chat/latest', 'POST', {
-                    server: server,
-                    count: 1
-                }, function (err, response) {
-                    if (err) {
-                        if (err.message == 429) {
-                            return;
-                        }
-                        logError('Internal error occured');
-                        throw err;
-                    }
-                    response = JSON.parse(response);
-                    if (response.error) {
-                        return logError(response.message);
-                    }
-                    if (Object.keys(response).length > 0) {
-                        for (var property in response) {
-                            var message = response[property];
-                            lastMessage = message.uid + 1;
-                        }
-                    }
-                    callback();
-                });
+                callback();
             }
         ], function (err) {
             loading = false;
