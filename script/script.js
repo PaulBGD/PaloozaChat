@@ -82,7 +82,9 @@
                 for (var property in response) {
                     var message = response[property];
                     lastMessage = message.uid + 1;
-                    ids.push(message.id);
+                    if (ids.indexOf(message.id) == -1) {
+                        ids.push(message.id);
+                    }
                     messages.push({
                         id: message.id,
                         message: message.message,
