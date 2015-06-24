@@ -188,7 +188,7 @@
                         for (var property in response) {
                             names.push(response[property].name);
                         }
-                        logNormal('Online Players: ' + names.join(','));
+                        logNormal('Online Players: ' + names.join(', '));
                     });
                 });
             } else {
