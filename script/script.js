@@ -274,6 +274,8 @@
             },
             function (selected, callback) {
                 server = selected;
+                selected = String(selected).charAt(0).toUpperCase() + selected.slice(1);
+                document.getElementById('header').innerHTML = selected;
                 callback();
             }
         ], function (err) {
