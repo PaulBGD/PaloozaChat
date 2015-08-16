@@ -7,6 +7,7 @@
     var lastMessage = 1;
     var previous = [];
     var previousIndex = -1;
+    var messageInterval = -1;
 
     var loading = false;
 
@@ -44,6 +45,7 @@
     }
 
     var app = document.getElementById('app');
+    var messageEl = document.getElementById('messages');
     var send = document.getElementById('send');
 
     function logNormal(message, username) {
@@ -63,10 +65,11 @@
             .replace(/'/g, "&#039;");
         span.appendChild(text);
 
-        var bottom = window.scrollMaxY === window.scrollY;
-        app.insertBefore(span, send);
-        if (bottom) {
-            window.scrollTo(0, document.body.scrollHeight);
+        console.log(messageEl.scrollTop + messageEl.clientHeight, messageEl.scrollHeight);
+        var bottom = messageEl.scrollTop + messageEl.clientHeight >= messageEl.scrollHeight;
+        messageEl.appendChild(span);
+        if (bottom && window.innerWidth >= 1200) {
+            messageEl.scrollTop = messageEl.scrollHeight;
         }
         return span;
     }
@@ -141,6 +144,26 @@
 
     document.getElementById('logOut').addEventListener('click', function (e) {
         location.reload();
+        e.preventDefault();
+        return false;
+    });
+
+    document.getElementById('goBack').addEventListener('click', function (e) {
+        document.getElementById('serverSelect').classList.remove('hidden');
+        document.getElementById('serverBrand').classList.remove('hidden');
+        document.getElementById('chatBrand').classList.add('hidden');
+        document.getElementById('goBack').classList.add('hidden');
+        app.classList.add('hidden');
+        var nodes = messageEl.childNodes;
+        var length = nodes.length;
+        while (length--) {
+            var node = nodes[length];
+            if (node.tagName == 'DIV') {
+                messageEl.removeChild(node);
+            }
+        }
+        clearInterval(messageInterval);
+        lastMessage = 1;
         e.preventDefault();
         return false;
     });
@@ -323,7 +346,7 @@
             chatBrand.classList.remove('hidden');
             document.getElementById('goBack').classList.remove('hidden');
             document.getElementById('app').classList.remove('hidden');
-            setInterval(getMessages, 1500);
+            messageInterval = setInterval(getMessages, 1500);
         });
         e.preventDefault();
         return false;

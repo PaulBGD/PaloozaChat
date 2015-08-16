@@ -2,13 +2,13 @@ body {
     margin-bottom: 50px;
 }
 
-#defaultBrand {
+.navbar-brand {
     font-family: 'Oswald', sans-serif;
     text-transform: uppercase;
     color: #fff;
 }
 
-#defaultBrand > span {
+.navbar-brand > span {
     color: #E74C3C;
 }
 
@@ -16,12 +16,12 @@ body {
     margin-left: 10px;
 }
 
-#app > div {
+#messages > div {
     padding: 5px 10px;
     display: block;
 }
 
-#app > div > img {
+#messages > div > img {
     margin-right: 10px;
 }
 
@@ -32,5 +32,10 @@ body {
 @media (min-width: 1200px) {
     #login {
         margin-top: 125px;
+    }
+
+    #messages {
+        height: 455px;
+        overflow: auto;
     }
 }

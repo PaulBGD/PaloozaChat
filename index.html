@@ -12,30 +12,32 @@
 </head>
 <body>
 <div class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <a id="goBack" href="#" class="navbar-icon hidden"><i class="material-icons">&#xE5C4;</i></a>
-            <span class="navbar-brand">
-                <span id="defaultBrand">Minigame <span>Palooza</span></span>
-                <span id="serverBrand" class="hidden">Select a Server</span>
-                <span id="chatBrand" class="hidden"></span>
-            </span>
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse" id="nav-collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="http://www.minigamepalooza.com">Back to Site</a></li>
-                <li id="logoutList" class="hidden"><a id="logOut" href="#">Log Out <img id="avatar" src="#" class="img-rounded"></a></li>
-            </ul>
-        </div>
+    <div class="navbar-header">
+        <span class="navbar-brand">
+            Minigame <span>Palooza</span>
+        </span>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+    </div>
+    <div class="collapse navbar-collapse" id="nav-collapse">
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="http://www.minigamepalooza.com">Back to Site</a></li>
+            <li id="logoutList" class="hidden"><a id="logOut" href="#">Log Out <img id="avatar" src="#" class="img-rounded"></a></li>
+        </ul>
     </div>
 </div>
 
 <div class="jumbotron-header">
+    <h1>
+        <a id="goBack" href="#" class="nav-icon hidden"><i class="material-icons">&#xE5C4;</i></a>
+        <span id="defaultBrand">Log In</span>
+        <span id="serverBrand" class="hidden">Select a Server</span>
+        <span id="chatBrand" class="hidden"></span>
+    </h1>
+
     <div class="fixed">
         <div id="loginContainer" class="padded">
             <form id="login" class="row">
@@ -53,11 +55,16 @@
                 </div>
             </form>
         </div>
-        <div id="serverSelect" class="padded hidden row">
-            <br><br><br>
-            <div id="serverButtons" class="btn-group-vertical col-md-4 col-md-offset-4"></div>
+        <div id="serverSelect" class="padded hidden">
+            <div class="hidden-sm hidden-xs"><br><br></div>
+            <br>
+
+            <div class="row">
+                <div id="serverButtons" class="btn-group-vertical col-sm-4 col-sm-offset-4"></div>
+            </div>
         </div>
         <div id="app" class="hidden">
+            <div id="messages"></div>
             <form id="send">
                 <input id="message" type="text" placeholder="Your Message" autocomplete="off" class="form-control input-lg">
                 <button class="hidden" type="submit"></button>
