@@ -83,7 +83,7 @@
             function (callback) {
                 ajax(url + 'servers/chat/latest', 'POST', {
                     server: server,
-                    count: 15,
+                    count: 30,
                     startAt: lastMessage
                 }, callback);
             },

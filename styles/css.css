@@ -31,11 +31,13 @@ body {
 
 @media (min-width: 1200px) {
     #login {
-        margin-top: 125px;
+        margin-top: 10vh;
+        margin-bottom: 10vh;
     }
 
     #messages {
-        height: 455px;
         overflow: auto;
+        height: 455px;
+        height: 50vh;
     }
 }
