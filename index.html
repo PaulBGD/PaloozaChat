@@ -5,40 +5,69 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Palooza Chat</title>
-    <link href='http://fonts.googleapis.com/css?family=Roboto:400,500' rel='stylesheet' type='text/css'>
-    <link href="styles/normalize.css" rel="stylesheet" type="text/css">
-    <link href="styles/styles.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+    <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="Strapalooza/css/main.css" rel="stylesheet" type="text/css">
+    <link href="styles/css.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div id="loginContainer" class="container-fixed">
-    <form id="login">
-        <div id="loginError" class="error"></div>
-        <h1 class="text-center">Palooza Chat</h1>
-        <h3 class="text-center">Log In</h3>
-        <div class="form-input text-center">
-            <label for="username">Username</label>
-            <input id="username" type="text" placeholder="Username">
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a id="goBack" href="#" class="navbar-icon hidden"><i class="material-icons">&#xE5C4;</i></a>
+            <span class="navbar-brand">
+                <span id="defaultBrand">Minigame <span>Palooza</span></span>
+                <span id="serverBrand" class="hidden">Select a Server</span>
+                <span id="chatBrand" class="hidden"></span>
+            </span>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
         </div>
-        <div class="form-input text-center">
-            <label for="password">Password</label>
-            <input id="password" type="password" placeholder="Password">
+        <div class="collapse navbar-collapse" id="nav-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="http://www.minigamepalooza.com">Back to Site</a></li>
+                <li id="logoutList" class="hidden"><a id="logOut" href="#">Log Out <img id="avatar" src="#" class="img-rounded"></a></li>
+            </ul>
         </div>
-        <div class="form-input text-center">
-            <button type="submit">Log In</button>
+    </div>
+</div>
+
+<div class="jumbotron-header">
+    <div class="fixed">
+        <div id="loginContainer" class="padded">
+            <form id="login" class="row">
+                <div class="col-md-4 col-md-offset-4">
+                    <div id="loginError" class="alert alert-danger hidden"></div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input id="username" type="text" placeholder="Username" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" placeholder="Password" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                </div>
+            </form>
         </div>
-    </form>
+        <div id="serverSelect" class="padded hidden row">
+            <br><br><br>
+            <div id="serverButtons" class="btn-group-vertical col-md-4 col-md-offset-4"></div>
+        </div>
+        <div id="app" class="hidden">
+            <form id="send">
+                <input id="message" type="text" placeholder="Your Message" autocomplete="off" class="form-control input-lg">
+                <button class="hidden" type="submit"></button>
+            </form>
+        </div>
+    </div>
 </div>
-<div id="serverSelect" class="container-fixed">
-    <h1 class="text-center">Palooza Chat</h1>
-    <h3 class="text-center">Select Server</h3>
-</div>
-<div id="app">
-    <div id="header"></div>
-    <form id="send">
-        <input id="message" type="text" placeholder="Your Message" autocomplete="off">
-        <button class="hidden" type="submit"></button>
-    </form>
-</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
 <script src="script/async.js"></script>
 <script src="script/script.js"></script>
 </body>

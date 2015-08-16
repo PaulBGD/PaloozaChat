@@ -43,16 +43,28 @@
         xmlhttp.send();
     }
 
-    function logNormal(message) {
-        var span = document.createElement('span');
-        span.innerHTML = message.replace(/&/g, "&amp;")
+    var app = document.getElementById('app');
+    var send = document.getElementById('send');
+
+    function logNormal(message, username) {
+        var span = document.createElement('div');
+        if (username) {
+            var avatar = document.createElement('img');
+            avatar.setAttribute('src', 'http://cravatar.eu/avatar/' + username + '/25');
+            avatar.classList.add('img-rounded');
+            avatar.classList.add('pull-left');
+            span.appendChild(avatar);
+        }
+        var text = document.createElement('span');
+        text.innerHTML = message.replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
-        var app = document.getElementById('app');
+        span.appendChild(text);
+
         var bottom = window.scrollMaxY === window.scrollY;
-        app.appendChild(span);
+        app.insertBefore(span, send);
         if (bottom) {
             window.scrollTo(0, document.body.scrollHeight);
         }
@@ -68,7 +80,7 @@
             function (callback) {
                 ajax(url + 'servers/chat/latest', 'POST', {
                     server: server,
-                    count: 100,
+                    count: 15,
                     startAt: lastMessage
                 }, callback);
             },
@@ -113,7 +125,7 @@
                     } else if (message.type == 2) {
                         prefix = '[WEB] ';
                     }
-                    logNormal(prefix + response[message.id].name + ': ' + message.message);
+                    logNormal(prefix + response[message.id].name + ': ' + message.message, response[message.id].name);
                 }
             }
         ], function (err) {
@@ -126,6 +138,12 @@
             }
         });
     }
+
+    document.getElementById('logOut').addEventListener('click', function (e) {
+        location.reload();
+        e.preventDefault();
+        return false;
+    });
 
     var messages = {
         'Password is not set': 'You have not set your password yet. Go ingame and type /account password <password> to do so'
@@ -153,7 +171,7 @@
         previous.unshift(message);
         if (message.length > 0 && message.charAt(0) == '/') {
             // let's handle this command
-            logNormal(message);
+            logNormal(message, name);
             var arguments = message.replace('/', '').split(' ');
             var command = arguments.shift();
             if (command.toLowerCase() == 'online') {
@@ -226,7 +244,7 @@
         var username = document.getElementById('username').value;
         var password = document.getElementById('password').value;
         var loginError = document.getElementById('loginError');
-        loginError.style.display = 'none';
+        loginError.classList.add('hidden');
         async.waterfall([
             function (callback) {
                 ajax(url + 'player/from-name', 'POST', {
@@ -260,24 +278,30 @@
                 }
                 var length = response.length;
                 var select = document.getElementById('serverSelect');
+                var buttons = document.getElementById('serverButtons');
                 while (length--) {
                     var server = response[length].server;
                     (function (server) {
                         var element = document.createElement('button');
                         element.innerHTML = server;
-                        element.addEventListener('click', function (e) {
+                        element.classList.add('btn');
+                        element.classList.add('btn-primary');
+                        element.classList.add('btn-block');
+                        element.addEventListener('click', function () {
                             callback(null, server);
                         });
-                        select.appendChild(element);
+                        buttons.appendChild(element);
                     })(server);
                 }
-                document.getElementById('loginContainer').style.display = 'none';
-                select.style.display = 'block';
+                document.getElementById('avatar').setAttribute('src', 'http://cravatar.eu/avatar/' + username + '/26');
+                document.getElementById('logoutList').classList.remove('hidden');
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('defaultBrand').classList.add('hidden');
+                document.getElementById('serverBrand').classList.remove('hidden');
+                select.classList.remove('hidden');
             },
             function (selected, callback) {
                 server = selected;
-                selected = String(selected).charAt(0).toUpperCase() + selected.slice(1);
-                document.getElementById('header').innerHTML = selected;
                 callback();
             }
         ], function (err) {
@@ -288,12 +312,17 @@
                         err = messages[err];
                     }
                     loginError.innerHTML = err;
-                    return loginError.style.display = 'block';
+                    return loginError.classList.remove('hidden');
                 }
                 throw new Error(err);
             }
-            document.getElementById('serverSelect').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
+            document.getElementById('serverSelect').classList.add('hidden');
+            document.getElementById('serverBrand').classList.add('hidden');
+            var chatBrand = document.getElementById('chatBrand');
+            chatBrand.innerHTML = String(server).charAt(0).toUpperCase() + server.slice(1);
+            chatBrand.classList.remove('hidden');
+            document.getElementById('goBack').classList.remove('hidden');
+            document.getElementById('app').classList.remove('hidden');
             setInterval(getMessages, 1500);
         });
         e.preventDefault();

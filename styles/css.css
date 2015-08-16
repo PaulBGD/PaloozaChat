@@ -1,0 +1,36 @@
+body {
+    margin-bottom: 50px;
+}
+
+#defaultBrand {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+#defaultBrand > span {
+    color: #E74C3C;
+}
+
+#avatar {
+    margin-left: 10px;
+}
+
+#app > div {
+    padding: 5px 10px;
+    display: block;
+}
+
+#app > div > img {
+    margin-right: 10px;
+}
+
+#message {
+    padding: 10px;
+}
+
+@media (min-width: 1200px) {
+    #login {
+        margin-top: 125px;
+    }
+}
